@@ -1,0 +1,130 @@
+openapi: 3.0.3
+info:
+  title: Документація для bc2024-5
+  description: |-
+    Апішки для роботи з нотатками
+servers:
+  - url: http://localhost:5000
+tags:
+  - name: Нотатки
+    description: Операції з нотатками
+  - name: Форми
+    description: HTML форми
+paths:
+  /UploadForm.html:
+    get:
+      tags:
+        - Форми
+      summary: Отримуємо форму
+      responses:
+        '200':
+          description: Успіх
+          content:
+            text/html:
+              schema:
+                type: string
+  /notes:
+    get:
+      tags:
+        - Нотатки
+      summary: Отримати список всіх нотаток
+      operationId: getNotes
+      responses:
+        '200':
+          description: Успіх
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notes'
+  /write:
+    post:
+      tags:
+        - Нотатки
+      summary: Створити нотатку
+      requestBody:
+        content: 
+          multipart/form-data: 
+            schema:           
+              type: object
+              properties:      
+                note_name:
+                  type: string
+                note:    
+                  type: string
+      responses:
+        '201':
+          description: Нотатка успішно створена
+        '400':
+          description: Бед ріквест
+  /notes/:name:
+    get:
+      tags:
+        - Нотатки
+      summary: Отримати текст нотатки
+      parameters:
+        - name: note_name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/note'
+        '404':
+          description: Нотатка не знайдена
+    put:
+      tags:
+        - Нотатки
+      summary: Змінити текст нотатки
+      parameters:
+        - name: note_name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/text:
+            schema: 
+              type: string
+      responses:
+        '200':
+          description: Нотатка успішно змінена
+        '404':
+          description: Нотатка не знайдена
+    delete:
+      tags:
+        - Нотатки
+      summary: Видалити нотатку
+      parameters:
+        - name: note_name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Нотатку успішно видалено
+        '404':
+          description: Нотатка не знайдена
+      
+components:
+  schemas:
+    note:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Пасхалка"
+        text:
+          type: string
+          example: "Delphi це королева мов програмування"      
+    notes:
+      type: array
+      items:
+        $ref: '#/components/schemas/notes'
+            
